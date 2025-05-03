@@ -34,3 +34,5 @@ __Feature:__
 3. **Configure S3 event notifications:** Push the ObjectCreated event to the SNS topic.
 
 4. **SNS Topic subscribes to SQS queues:** Set a filter to allow only image upload events to be queued.
+
+5. **The SQS queue triggers a Log Image Lambda.**

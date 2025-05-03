@@ -55,6 +55,16 @@ export class EDAAppStack extends cdk.Stack {
       })
     );
 
+    // Log Image Lambda
+    const logImageFn = new lambdanode.NodejsFunction(this, "LogImageFn", {
+      entry: "lambdas/logImage.ts",
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: "handler",
+    });
+
+    // SQS 队列触发 Log Image Lambda
+    logImageFn.addEventSource(new events.SqsEventSource(imageUploadQueue));
+
     // Output
     
     new cdk.CfnOutput(this, "bucketName", {
