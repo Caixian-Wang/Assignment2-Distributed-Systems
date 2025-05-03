@@ -13,12 +13,14 @@ This repository contains the implementation of a skeleton design for an applicat
 __Feature:__
 
 + Photographer:
-  + Log new Images
-  + Metadata updating
-  + Invalid image removal  
-  + Status Update Mailer
+  + Log new Images — Completed and Tested.
+  + Metadata updating — Completed and Tested.
+  + Invalid image removal  — Completed and Tested.
+  + Status Update Mailer — Not Attempted
 + Moderator
-  + Status updating
+  + Status updating   — Completed and Tested.
++ Filtering  — Completed and Tested.
++ Messaging — Not Attempted
 
 ### Commit Information 
 
@@ -107,4 +109,6 @@ __Feature:__
 23. **Modify the filter policy configuration of an SNS topic**
 
 24. **Make up for missing fields**
+
+25. **Completion updates**
 
