@@ -84,3 +84,5 @@ __Feature:__
 
 18. **Correct the naming error in the rewritten log logic.**
 
+19. **Modify the SQS subscription filter policy.**
+

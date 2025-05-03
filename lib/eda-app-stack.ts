@@ -92,6 +92,17 @@ export class EDAAppStack extends cdk.Stack {
     imageTable.grantWriteData(addMetadataFn);
     addMetadataFn.addEnvironment("IMAGE_TABLE_NAME", imageTable.tableName);
 
+    // Add Metadata Lambda 只接收带有 Caption、Date、name 属性的消息
+    imageEventsTopic.addSubscription(
+      new subs.LambdaSubscription(addMetadataFn, {
+        filterPolicy: {
+          metadata_type: sns.SubscriptionFilter.stringFilter({
+            allowlist: ["Caption", "Date", "name"],
+          }),
+        },
+      })
+    );
+
     // Remove Image Lambda
     const removeImageFn = new lambdanode.NodejsFunction(this, "RemoveImageFn", {
       entry: "lambdas/removeImage.ts",
