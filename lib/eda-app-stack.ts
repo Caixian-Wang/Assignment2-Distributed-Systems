@@ -126,7 +126,7 @@ export class EDAAppStack extends cdk.Stack {
       handler: "handler",
       environment: {
         IMAGE_TABLE_NAME: imageTable.tableName,
-        SES_FROM_ADDRESS: "your-verified-sender@example.com", // 替换为已验证的 SES 邮箱
+        SES_FROM_ADDRESS: "20108795@mail.wit.ie", // 已验证邮箱
       },
     });
 
