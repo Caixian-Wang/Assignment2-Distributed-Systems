@@ -50,3 +50,5 @@ __Feature:__
 
 10. **Parse message bodies and attributes, and update DynamoDB tables:** Add Metadata Lambda parses the message body and attributes, and updates the metadata fields of the corresponding image in the DynamoDB table.
 
+11. **Exception will be thrown if it is invalid:** The Log Image Lambda checks the file type, and if it is invalid, it throws an exception and the message enters the SQS DLQ.
+

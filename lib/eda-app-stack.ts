@@ -38,10 +38,19 @@ export class EDAAppStack extends cdk.Stack {
       new s3n.SnsDestination(imageEventsTopic)
     );
 
-    // 创建 SQS 队列
+    // 创建 SQS 死信队列（DLQ）
+    const imageUploadDLQ = new sqs.Queue(this, "ImageUploadDLQ", {
+      retentionPeriod: cdk.Duration.days(14),
+    });
+
+    // 创建 SQS 队列，关联 DLQ
     const imageUploadQueue = new sqs.Queue(this, "ImageUploadQueue", {
       visibilityTimeout: cdk.Duration.seconds(60),
       retentionPeriod: cdk.Duration.days(4),
+      deadLetterQueue: {
+        maxReceiveCount: 3,
+        queue: imageUploadDLQ,
+      },
     });
 
     // SNS Topic 订阅 SQS 队列，设置过滤策略
