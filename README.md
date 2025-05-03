@@ -48,5 +48,5 @@ __Feature:__
 
 9. **Configure the Add Metadata Lambda subscription:** Configure the Add Metadata Lambda subscription for an SNS topic, set a filter, and only receive metadata-related messages (attributes Caption, Date, name).
 
-10. 
+10. **Parse message bodies and attributes, and update DynamoDB tables:** Add Metadata Lambda parses the message body and attributes, and updates the metadata fields of the corresponding image in the DynamoDB table.
 
