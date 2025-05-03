@@ -28,9 +28,13 @@ export class EDAAppStack extends cdk.Stack {
       handler: "handler",
     });
 
+    // 创建 SNS Topic
+    const imageEventsTopic = new sns.Topic(this, "ImageEventsTopic");
+
+    // S3 事件推送到 SNS Topic
     imagesBucket.addEventNotification(
       s3.EventType.OBJECT_CREATED,
-      new s3n.LambdaDestination(validateImageTypeFn)
+      new s3n.SnsDestination(imageEventsTopic)
     );
 
     // Output

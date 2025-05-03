@@ -31,3 +31,4 @@ __Feature:__
 
 2. **Configure an S3 bucket:** Upload ``.jpeg`` and ``.png ``files is allowed.
 
+3. **Configure S3 event notifications:** Push the ObjectCreated event to the SNS topic.
