@@ -53,10 +53,11 @@ export class EDAAppStack extends cdk.Stack {
       },
     });
 
-    // SNS Topic 订阅 SQS 队列，设置过滤策略
+    // SQS 只接收图片上传事件（无元数据属性）
     imageEventsTopic.addSubscription(
       new subs.SqsSubscription(imageUploadQueue, {
         filterPolicy: {
+          metadata_type: sns.SubscriptionFilter.existsFilter(),
           suffix: sns.SubscriptionFilter.stringFilter({
             allowlist: ['.jpeg', '.png'],
           }),
@@ -65,44 +66,6 @@ export class EDAAppStack extends cdk.Stack {
       })
     );
 
-    // Add Metadata Lambda
-    const addMetadataFn = new lambdanode.NodejsFunction(this, "AddMetadataFn", {
-      entry: "lambdas/addMetadata.ts",
-      runtime: lambda.Runtime.NODEJS_18_X,
-      handler: "handler",
-    });
-
-    // SNS Topic 订阅 Add Metadata Lambda，设置过滤策略
-    imageEventsTopic.addSubscription(
-      new subs.LambdaSubscription(addMetadataFn, {
-        filterPolicy: {
-          metadata_type: sns.SubscriptionFilter.stringFilter({
-            allowlist: ["Caption", "Date", "name"],
-          }),
-        },
-      })
-    );
-
-    // Log Image Lambda
-    const logImageFn = new lambdanode.NodejsFunction(this, "LogImageFn", {
-      entry: "lambdas/logImage.ts",
-      runtime: lambda.Runtime.NODEJS_18_X,
-      handler: "handler",
-    });
-
-    // SQS 队列触发 Log Image Lambda
-    logImageFn.addEventSource(new events.SqsEventSource(imageUploadQueue));
-
-    // Remove Image Lambda
-    const removeImageFn = new lambdanode.NodejsFunction(this, "RemoveImageFn", {
-      entry: "lambdas/removeImage.ts",
-      runtime: lambda.Runtime.NODEJS_18_X,
-      handler: "handler",
-    });
-
-    // DLQ 触发 Remove Image Lambda
-    removeImageFn.addEventSource(new events.SqsEventSource(imageUploadDLQ));
-
     // 创建 DynamoDB 表，开启 Stream
     const imageTable = new dynamodb.Table(this, "ImageTable", {
       partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
@@ -110,11 +73,51 @@ export class EDAAppStack extends cdk.Stack {
       stream: dynamodb.StreamViewType.NEW_IMAGE,
     });
 
-    // 赋予 Lambda 写表权限，并传递表名环境变量
+    // Log Image Lambda
+    const logImageFn = new lambdanode.NodejsFunction(this, "LogImageFn", {
+      entry: "lambdas/logImage.ts",
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: "handler",
+    });
+    logImageFn.addEventSource(new events.SqsEventSource(imageUploadQueue));
     imageTable.grantWriteData(logImageFn);
     logImageFn.addEnvironment("IMAGE_TABLE_NAME", imageTable.tableName);
+
+    // Add Metadata Lambda
+    const addMetadataFn = new lambdanode.NodejsFunction(this, "AddMetadataFn", {
+      entry: "lambdas/addMetadata.ts",
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: "handler",
+    });
     imageTable.grantWriteData(addMetadataFn);
     addMetadataFn.addEnvironment("IMAGE_TABLE_NAME", imageTable.tableName);
+
+    // Remove Image Lambda
+    const removeImageFn = new lambdanode.NodejsFunction(this, "RemoveImageFn", {
+      entry: "lambdas/removeImage.ts",
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: "handler",
+    });
+    removeImageFn.addEventSource(new events.SqsEventSource(imageUploadDLQ));
+
+    // Update Status Lambda 只接收无属性的审核消息
+    const updateStatusFn = new lambdanode.NodejsFunction(this, "UpdateStatusFn", {
+      entry: "lambdas/updateStatus.ts",
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: "handler",
+      environment: {
+        IMAGE_TABLE_NAME: imageTable.tableName,
+      },
+    });
+    imageTable.grantWriteData(updateStatusFn);
+    updateStatusFn.addEnvironment("IMAGE_TABLE_NAME", imageTable.tableName);
+    imageEventsTopic.addSubscription(
+      new subs.LambdaSubscription(updateStatusFn, {
+        filterPolicy: {
+          metadata_type: sns.SubscriptionFilter.existsFilter(),
+        },
+      })
+    );
 
     // 创建 Status Update Mailer Lambda
     const statusUpdateMailerFn = new lambdanode.NodejsFunction(this, "StatusUpdateMailerFn", {

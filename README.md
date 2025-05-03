@@ -54,3 +54,5 @@ __Feature:__
 
 12. **Status Update Mailer:** When the status of an image changes, the photographer will be automatically notified by email.
 
+13. **Implement filtering capabilities.**
+
