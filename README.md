@@ -60,3 +60,25 @@ __Feature:__
 
 15. **Modify the mailbox and test it.**
 
+16. **Add testing information :** 
+
+    ```json
+    //attributes.json
+    {
+      "metadata_type": {
+        "DataType": "String",
+        "StringValue": "Caption"
+      }
+    }
+    ```
+
+    ```json
+    // message.json
+    {
+        "id": "image1.jpeg",
+        "value": "Olympic 100m final - 2024"
+      }
+    ```
+
+    
+
