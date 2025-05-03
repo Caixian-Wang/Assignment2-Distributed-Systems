@@ -34,8 +34,20 @@ export class EDAAppStack extends cdk.Stack {
 
     // S3 事件推送到 SNS Topic
     imagesBucket.addEventNotification(
-      s3.EventType.OBJECT_CREATED,
-      new s3n.SnsDestination(imageEventsTopic)
+      s3.EventType.OBJECT_CREATED_PUT,
+      new s3n.SnsDestination(imageEventsTopic),
+      {
+        prefix: "",
+        suffix: ".jpeg"
+      }
+    );
+    imagesBucket.addEventNotification(
+      s3.EventType.OBJECT_CREATED_PUT,
+      new s3n.SnsDestination(imageEventsTopic),
+      {
+        prefix: "",
+        suffix: ".png"
+      }
     );
 
     // 创建 SQS 死信队列（DLQ）
