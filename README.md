@@ -86,3 +86,5 @@ __Feature:__
 
 19. **Modify the SQS subscription filter policy.**
 
+20. **Test the Invalid image removal feature.**
+
