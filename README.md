@@ -88,3 +88,19 @@ __Feature:__
 
 20. **Test the Invalid image removal feature.**
 
+21. **Add testing information :** 
+
+    ```json
+    //review.json
+    {
+      "id": "image1.jpeg",
+      "date": "01/05/2025",
+      "update": {
+        "status": "Pass",
+        "reason": "The picture quality is excellent"
+      }
+    }
+    ```
+
+    
+
