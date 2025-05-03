@@ -45,7 +45,11 @@ export const handler: SQSHandler = async (event) => {
 
           await ddb.send(new PutItemCommand({
             TableName: TABLE_NAME,
-            Item: { id: { S: srcKey } },
+            Item: { 
+              id: { S: srcKey },
+              status: { S: "Pending" }, // 初始化状态为 Pending
+              reason: { S: "" }, // 初始化原因为空
+            },
             ConditionExpression: 'attribute_not_exists(id)',
           }));
           console.log(`Successfully logged image: ${srcKey}`);

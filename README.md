@@ -106,3 +106,5 @@ __Feature:__
 
 23. **Modify the filter policy configuration of an SNS topic**
 
+24. **Make up for missing fields**
+
