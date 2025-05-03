@@ -22,6 +22,17 @@ export class EDAAppStack extends cdk.Stack {
       publicReadAccess: false,
     });
 
+    const validateImageTypeFn = new lambdanode.NodejsFunction(this, "ValidateImageTypeFn", {
+      entry: "lambdas/validateImageType.ts",
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: "handler",
+    });
+
+    imagesBucket.addEventNotification(
+      s3.EventType.OBJECT_CREATED,
+      new s3n.LambdaDestination(validateImageTypeFn)
+    );
+
     // Output
     
     new cdk.CfnOutput(this, "bucketName", {

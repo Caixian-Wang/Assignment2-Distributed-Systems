@@ -29,4 +29,5 @@ __Feature:__
    cdk deploy
    ```
 
-   
+2. **Configure an S3 bucket:** Upload ``.jpeg`` and ``.png ``files is allowed.
+
