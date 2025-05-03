@@ -82,3 +82,5 @@ __Feature:__
 
 17. **Rewrite the log logic**
 
+18. **Correct the naming error in the rewritten log logic.**
+
