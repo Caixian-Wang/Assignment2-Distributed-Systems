@@ -10,8 +10,6 @@ This repository contains the implementation of a skeleton design for an applicat
 
 ### Code Status.
 
-
-
 __Feature:__
 
 + Photographer:
@@ -22,6 +20,13 @@ __Feature:__
 + Moderator
   + Status updating
 
+### Push Information 
 
+1. **Install dependencies:** type the commands to Install dependencies.
 
+   ```sh
+   npm install
+   cdk deploy
+   ```
 
+   
