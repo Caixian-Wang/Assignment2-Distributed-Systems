@@ -75,7 +75,7 @@ export class EDAAppStack extends cdk.Stack {
 
     // Log Image Lambda
     const logImageFn = new lambdanode.NodejsFunction(this, "LogImageFn", {
-      entry: "lambdas/logImage.ts",
+      entry: "lambdas/processImage.ts",
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: "handler",
     });
