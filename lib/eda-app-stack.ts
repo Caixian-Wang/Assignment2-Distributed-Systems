@@ -93,15 +93,54 @@ export class EDAAppStack extends cdk.Stack {
     // SQS 队列触发 Log Image Lambda
     logImageFn.addEventSource(new events.SqsEventSource(imageUploadQueue));
 
-    // 创建 DynamoDB 表
+    // Remove Image Lambda
+    const removeImageFn = new lambdanode.NodejsFunction(this, "RemoveImageFn", {
+      entry: "lambdas/removeImage.ts",
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: "handler",
+    });
+
+    // DLQ 触发 Remove Image Lambda
+    removeImageFn.addEventSource(new events.SqsEventSource(imageUploadDLQ));
+
+    // 创建 DynamoDB 表，开启 Stream
     const imageTable = new dynamodb.Table(this, "ImageTable", {
       partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
+      stream: dynamodb.StreamViewType.NEW_IMAGE,
     });
 
     // 赋予 Lambda 写表权限，并传递表名环境变量
     imageTable.grantWriteData(logImageFn);
     logImageFn.addEnvironment("IMAGE_TABLE_NAME", imageTable.tableName);
+    imageTable.grantWriteData(addMetadataFn);
+    addMetadataFn.addEnvironment("IMAGE_TABLE_NAME", imageTable.tableName);
+
+    // 创建 Status Update Mailer Lambda
+    const statusUpdateMailerFn = new lambdanode.NodejsFunction(this, "StatusUpdateMailerFn", {
+      entry: "lambdas/statusUpdateMailer.ts",
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: "handler",
+      environment: {
+        IMAGE_TABLE_NAME: imageTable.tableName,
+        SES_FROM_ADDRESS: "your-verified-sender@example.com", // 替换为已验证的 SES 邮箱
+      },
+    });
+
+    // 赋予 Lambda 读取表和 SES 发送邮件权限
+    imageTable.grantReadData(statusUpdateMailerFn);
+    statusUpdateMailerFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ["ses:SendEmail", "ses:SendRawEmail"],
+      resources: ["*"]
+    }));
+
+    // 配置 DynamoDB Stream 触发 Lambda
+    statusUpdateMailerFn.addEventSource(
+      new events.DynamoEventSource(imageTable, {
+        startingPosition: lambda.StartingPosition.LATEST,
+        batchSize: 5,
+      })
+    );
 
     // Output
     

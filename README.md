@@ -52,3 +52,5 @@ __Feature:__
 
 11. **Exception will be thrown if it is invalid:** The Log Image Lambda checks the file type, and if it is invalid, it throws an exception and the message enters the SQS DLQ.
 
+12. **Status Update Mailer:** When the status of an image changes, the photographer will be automatically notified by email.
+
