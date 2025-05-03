@@ -8,6 +8,7 @@ import * as sqs from "aws-cdk-lib/aws-sqs";
 import * as sns from "aws-cdk-lib/aws-sns";
 import * as subs from "aws-cdk-lib/aws-sns-subscriptions";
 import * as iam from "aws-cdk-lib/aws-iam";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 
 import { Construct } from "constructs";
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
@@ -64,6 +65,16 @@ export class EDAAppStack extends cdk.Stack {
 
     // SQS 队列触发 Log Image Lambda
     logImageFn.addEventSource(new events.SqsEventSource(imageUploadQueue));
+
+    // 创建 DynamoDB 表
+    const imageTable = new dynamodb.Table(this, "ImageTable", {
+      partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    // 赋予 Lambda 写表权限，并传递表名环境变量
+    imageTable.grantWriteData(logImageFn);
+    logImageFn.addEnvironment("IMAGE_TABLE_NAME", imageTable.tableName);
 
     // Output
     

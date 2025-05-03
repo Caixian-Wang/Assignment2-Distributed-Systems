@@ -42,3 +42,5 @@ __Feature:__
    - The Log Image Lambda checks the file type and only handles ``.jpeg`` and ``.png``, otherwise it throws an exception (the message goes into the DLQ).
    - The Log Image Lambda writes the file name of a valid image to the DynamoDB table as the primary key.
 
+7. **DynamoDB table:** Create a DynamoDB table and pass the table name to Lambda via an environment variable.
+
