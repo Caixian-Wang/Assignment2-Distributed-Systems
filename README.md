@@ -36,3 +36,9 @@ __Feature:__
 4. **SNS Topic subscribes to SQS queues:** Set a filter to allow only image upload events to be queued.
 
 5. **The SQS queue triggers a Log Image Lambda.**
+
+6. **Image Lambda Setting：** 
+
+   - The Log Image Lambda checks the file type and only handles ``.jpeg`` and ``.png``, otherwise it throws an exception (the message goes into the DLQ).
+   - The Log Image Lambda writes the file name of a valid image to the DynamoDB table as the primary key.
+
