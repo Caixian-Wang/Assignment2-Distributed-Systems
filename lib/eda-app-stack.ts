@@ -57,9 +57,8 @@ export class EDAAppStack extends cdk.Stack {
     imageEventsTopic.addSubscription(
       new subs.SqsSubscription(imageUploadQueue, {
         filterPolicy: {
-          metadata_type: sns.SubscriptionFilter.existsFilter(),
-          suffix: sns.SubscriptionFilter.stringFilter({
-            allowlist: ['.jpeg', '.png'],
+          metadata_type: sns.SubscriptionFilter.stringFilter({
+            allowlist: [],
           }),
         },
         rawMessageDelivery: true,
@@ -110,6 +109,7 @@ export class EDAAppStack extends cdk.Stack {
       handler: "handler",
     });
     removeImageFn.addEventSource(new events.SqsEventSource(imageUploadDLQ));
+    imagesBucket.grantDelete(removeImageFn);
 
     // Update Status Lambda 只接收无属性的审核消息
     const updateStatusFn = new lambdanode.NodejsFunction(this, "UpdateStatusFn", {

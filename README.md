@@ -102,5 +102,5 @@ __Feature:__
     }
     ```
 
-    
+22. **Fixed the automatic deletion function of invalid images**
 

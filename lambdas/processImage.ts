@@ -32,6 +32,8 @@ export const handler: SQSHandler = async (event) => {
       }
     } catch (error) {
       console.error('Error processing record:', error);
+      // 重新抛出错误，确保消息进入 DLQ
+      throw error;
     }
   }
 }; 
