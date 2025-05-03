@@ -20,7 +20,7 @@ __Feature:__
 + Moderator
   + Status updating
 
-### Push Information 
+### Commit Information 
 
 1. **Install dependencies:** type the commands to Install dependencies.
 
@@ -32,3 +32,5 @@ __Feature:__
 2. **Configure an S3 bucket:** Upload ``.jpeg`` and ``.png ``files is allowed.
 
 3. **Configure S3 event notifications:** Push the ObjectCreated event to the SNS topic.
+
+4. **SNS Topic subscribes to SQS queues:** Set a filter to allow only image upload events to be queued.

@@ -37,6 +37,24 @@ export class EDAAppStack extends cdk.Stack {
       new s3n.SnsDestination(imageEventsTopic)
     );
 
+    // 创建 SQS 队列
+    const imageUploadQueue = new sqs.Queue(this, "ImageUploadQueue", {
+      visibilityTimeout: cdk.Duration.seconds(60),
+      retentionPeriod: cdk.Duration.days(4),
+    });
+
+    // SNS Topic 订阅 SQS 队列，设置过滤策略
+    imageEventsTopic.addSubscription(
+      new subs.SqsSubscription(imageUploadQueue, {
+        filterPolicy: {
+          suffix: sns.SubscriptionFilter.stringFilter({
+            allowlist: ['.jpeg', '.png'],
+          }),
+        },
+        rawMessageDelivery: true,
+      })
+    );
+
     // Output
     
     new cdk.CfnOutput(this, "bucketName", {
