@@ -57,7 +57,9 @@ export class EDAAppStack extends cdk.Stack {
     imageEventsTopic.addSubscription(
       new subs.SqsSubscription(imageUploadQueue, {
         filterPolicy: {
-          metadata_type: sns.SubscriptionFilter.existsFilter(),
+          metadata_type: sns.SubscriptionFilter.stringFilter({
+            allowlist: [""],
+          }),
         },
         rawMessageDelivery: true,
       })
@@ -123,7 +125,9 @@ export class EDAAppStack extends cdk.Stack {
     imageEventsTopic.addSubscription(
       new subs.LambdaSubscription(updateStatusFn, {
         filterPolicy: {
-          metadata_type: sns.SubscriptionFilter.existsFilter(),
+          metadata_type: sns.SubscriptionFilter.stringFilter({
+            allowlist: ["status"],
+          }),
         },
       })
     );

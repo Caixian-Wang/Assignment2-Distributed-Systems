@@ -104,3 +104,5 @@ __Feature:__
 
 22. **Fixed the automatic deletion function of invalid images**
 
+23. **Modify the filter policy configuration of an SNS topic**
+
