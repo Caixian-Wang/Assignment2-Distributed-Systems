@@ -44,3 +44,9 @@ __Feature:__
 
 7. **DynamoDB table:** Create a DynamoDB table and pass the table name to Lambda via an environment variable.
 
+8. **Photographer Post Messages:** The photographer uses the AWS CLI to post messages with message attributes to SNS Topics.
+
+9. **Configure the Add Metadata Lambda subscription:** Configure the Add Metadata Lambda subscription for an SNS topic, set a filter, and only receive metadata-related messages (attributes Caption, Date, name).
+
+10. 
+

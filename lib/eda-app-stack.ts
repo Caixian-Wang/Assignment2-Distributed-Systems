@@ -56,6 +56,24 @@ export class EDAAppStack extends cdk.Stack {
       })
     );
 
+    // Add Metadata Lambda
+    const addMetadataFn = new lambdanode.NodejsFunction(this, "AddMetadataFn", {
+      entry: "lambdas/addMetadata.ts",
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: "handler",
+    });
+
+    // SNS Topic 订阅 Add Metadata Lambda，设置过滤策略
+    imageEventsTopic.addSubscription(
+      new subs.LambdaSubscription(addMetadataFn, {
+        filterPolicy: {
+          metadata_type: sns.SubscriptionFilter.stringFilter({
+            allowlist: ["Caption", "Date", "name"],
+          }),
+        },
+      })
+    );
+
     // Log Image Lambda
     const logImageFn = new lambdanode.NodejsFunction(this, "LogImageFn", {
       entry: "lambdas/logImage.ts",
